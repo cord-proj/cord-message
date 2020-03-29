@@ -1,0 +1,24 @@
+name: CD Publish
+
+on:
+  deployment:
+    types: [published]
+
+jobs:
+  crates:
+    name: Crates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login to Crates.io
+        uses: actions-rs/cargo@v1
+        with:
+          command: login
+          args: ${{ secrets.CRATES_TOKEN }}
+
+      - name: Cargo publish
+        uses: actions-rs/cargo@v1
+        with:
+          command: publish
