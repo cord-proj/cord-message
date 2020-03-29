@@ -1,8 +1,9 @@
 name: CD Publish
 
 on:
-  deployment:
-    types: [published]
+  release:
+    types:
+      - published
 
 jobs:
   crates:
