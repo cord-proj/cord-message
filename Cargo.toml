@@ -5,8 +5,8 @@ edition = "2018"
 authors = ["Cord Contributors"]
 license = "MPL-2.0"
 description = """
-This is an internal crate for the Cord project that provides message transmission and
-routing functionality.
+This is an internal crate for the Cord Project that provides message transmission and
+comparison functionality.
 """
 homepage = "http://cord-proj.org"
 repository = "https://github.com/cord-proj/cord-message"
