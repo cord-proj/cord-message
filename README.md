@@ -1,6 +1,7 @@
 # Cord Message
 
 ![CI Code Testing and Linting](https://github.com/cord-proj/cord-message/workflows/CI%20Code%20Testing%20and%20Linting/badge.svg)
+![CI Security Audit on Push](https://github.com/cord-proj/cord-message/workflows/CI%20Security%20Audit%20on%20Push/badge.svg)
 
 > Cord Message is an internal crate for the Cord Project. For more information and usage,
 > check out [cord-proj/cord](https://github.com/cord-proj/cord).
