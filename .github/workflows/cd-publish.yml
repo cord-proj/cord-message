@@ -3,7 +3,7 @@ name: CD Publish
 on:
   release:
     types:
-      - published
+      - created
 
 jobs:
   crates:
@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: releases
 
       - name: Login to Crates.io
         uses: actions-rs/cargo@v1
