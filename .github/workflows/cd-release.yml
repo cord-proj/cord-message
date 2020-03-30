@@ -19,7 +19,10 @@ jobs:
 
       - name: Get CHANGELOG entry
         id: changelog
-        run: echo ::set-output name=body::$(python ci/changelog.py ${{ steps.version.outputs.value }})
+        run: |
+          body=$(python ci/changelog.py ${{ steps.version.outputs.value }})
+          body="${body//$'\n'/'%0A'}"
+          echo ::set-output name=body::$body
 
       - name: Create release
         uses: actions/create-release@master
