@@ -46,4 +46,4 @@ jobs:
         run: echo ::set-output name=value::$(sed -ne 's/version = "\(.*\)"/\1/p' < head/Cargo.toml)
 
       - name: Verify that version has been changed
-        run: [ "${{ steps.version.outputs.value }}" != "${{ steps.old_version.outputs.value }}" ]
+        run: \[ "${{ steps.version.outputs.value }}" != "${{ steps.old_version.outputs.value }}" \]
