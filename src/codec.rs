@@ -1,7 +1,7 @@
 use crate::{errors::*, message::Message};
 use bytes::{buf::BufMut, BytesMut};
 use error_chain::bail;
-use tokio_codec::{Decoder, Encoder};
+use tokio_util::codec::{Decoder, Encoder};
 
 use std::{convert::TryInto, mem, result::Result as StdResult, u16, u32, u8};
 
@@ -54,11 +54,10 @@ pub struct Codec {
 // Message framing on the wire looks like:
 //      [u8             ][u16      ][bytestr  ][u32        ][bytestr]
 //      [ns_discriminant][ns_length][namespace][data_length][data   ]
-impl Encoder for Codec {
-    type Item = Message;
+impl Encoder<Message> for Codec {
     type Error = Error;
 
-    fn encode(&mut self, message: Self::Item, dst: &mut BytesMut) -> StdResult<(), Self::Error> {
+    fn encode(&mut self, message: Message, dst: &mut BytesMut) -> StdResult<(), Self::Error> {
         // Ensure the namespace will fit into a u16 buffer
         if message.namespace().len() > u16::MAX as usize {
             bail!(ErrorKind::OversizedNamespace);
@@ -72,7 +71,7 @@ impl Encoder for Codec {
         dst.put_u8(message.poor_mans_discriminant());
 
         // Write namespace bytes to buffer
-        dst.put_u16_be(message.namespace().len() as u16);
+        dst.put_u16(message.namespace().len() as u16);
         dst.extend_from_slice(message.namespace().as_bytes());
 
         if let Message::Event(_, data) = message {
@@ -86,7 +85,7 @@ impl Encoder for Codec {
             dst.reserve(4 + data.len());
 
             // Write data bytes to buffer
-            dst.put_u32_be(data.len() as u32);
+            dst.put_u32(data.len() as u32);
             dst.extend_from_slice(data.as_bytes());
         }
 
@@ -251,7 +250,7 @@ mod tests {
         assert!(response.is_none());
 
         // Test decoding partial namespace
-        bytes.put_u16_be(13);
+        bytes.put_u16(13);
         bytes.extend_from_slice(b"/my/name");
         let response = decoder
             .decode(&mut bytes)
@@ -266,7 +265,7 @@ mod tests {
         assert!(response.is_none());
 
         // Test decoding partial data
-        bytes.put_u32_be(5);
+        bytes.put_u32(5);
         bytes.extend_from_slice(b"a");
         let response = decoder
             .decode(&mut bytes)
@@ -295,9 +294,9 @@ mod tests {
         assert_eq!(msg, Some(Message::Revoke("/my/namespace".into())));
 
         bytes.put_u8(4);
-        bytes.put_u16_be(4);
+        bytes.put_u16(4);
         bytes.extend_from_slice(b"/moo");
-        bytes.put_u32_be(3);
+        bytes.put_u32(3);
         bytes.extend_from_slice(b"cow");
         let msg = decoder
             .decode(&mut bytes)
