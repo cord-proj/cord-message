@@ -7,13 +7,13 @@ on:
 
 jobs:
   crates:
-    name: Crates
+    name: Publish Crate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: releases
+          ref: master
 
       - name: Login to Crates.io
         uses: actions-rs/cargo@v1
