@@ -3,14 +3,14 @@ use crate::Pattern;
 use std::mem;
 
 macro_rules! unwrap_msg {
-    ($variant:tt, $func_name:ident) => (
+    ($variant:tt, $func_name:ident) => {
         pub fn $func_name(self) -> Pattern {
             match self {
                 Message::$variant(pattern) => pattern,
-                _ => panic!("Expected Message variant $variant, got {:?}", self)
+                _ => panic!("Expected Message variant $variant, got {:?}", self),
             }
         }
-    )
+    };
 }
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
@@ -88,7 +88,7 @@ impl Message {
     }
 
     pub fn contains(&self, other: &Message) -> bool {
-        mem::discriminant(self) == mem::discriminant(&other)
+        mem::discriminant(self) == mem::discriminant(other)
             && self.namespace().contains(other.namespace())
     }
 }
